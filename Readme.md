@@ -44,3 +44,24 @@ You are free to use any frameworks/NuGet packages that you see fit. You should p
 Feel free to use code comments to describe your changes. You are also welcome to update this readme with any important details for us to consider.
 
 Once you have completed the exercise either ensure your repository is available publicly or contact the hiring manager to set up a private share.
+
+## Solution notes
+
+`RebateService` is now responsible only for orchestrating the calculation: it retrieves the rebate and product, selects a calculator, and stores a successful result. Data access is injected through `IRebateDataStore` and `IProductDataStore`, which keeps the service independent from concrete storage and makes it straightforward to unit test.
+
+Each incentive type has its own `IRebateCalculator` implementation. Adding another incentive requires a new calculator and registration at the composition root, without changing `RebateService`. Calculation inputs must be positive and the product must support the requested incentive.
+
+The runner uses small in-memory data stores because the data stores supplied with the exercise contain placeholder database implementations. It can be executed with:
+
+```shell
+dotnet run --project Smartwyre.DeveloperTest.Runner -- rebate-rate product-1 5
+```
+
+Available sample rebates are `rebate-cash`, `rebate-rate`, and `rebate-uom`. The sample product is `product-1`.
+
+Build and run the tests with:
+
+```shell
+dotnet build Smartwyre.DeveloperTest.sln
+dotnet test Smartwyre.DeveloperTest.sln
+```
